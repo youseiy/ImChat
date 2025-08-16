@@ -1,0 +1,9 @@
+[submodule "dependencies/imgui"]
+	path = dependencies/imgui
+	url = https://github.com/ocornut/imgui
+[submodule "dependencies/SDL3"]
+	path = dependencies/SDL3
+	url = https://github.com/libsdl-org/SDL.git
+[submodule "dependencies/SFML"]
+	path = dependencies/SFML
+	url = https://github.com/SFML/SFML.git
