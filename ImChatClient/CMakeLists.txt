@@ -10,6 +10,9 @@ target_include_directories(glad PUBLIC
 add_executable(ImChatClient
         src/main.cpp
         src/Window.cpp
+        src/UIScreen.cpp
+        src/UILoginScreen.cpp
+        src/UIChatLobby.cpp
 )
 
 # Specify include directories for ImChatClient

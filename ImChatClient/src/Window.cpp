@@ -13,7 +13,7 @@
 #include "SDL3/SDL_init.h"
 
 
-ImChat::ImChatClient::Window::Window(const std::string& Name,float w, float h):
+ImChat::Window::Window(const std::string& Name,float w, float h):
     m_width(w),m_height(h)
 {
 
@@ -69,24 +69,30 @@ ImChat::ImChatClient::Window::Window(const std::string& Name,float w, float h):
 };
 
 
-void ImChat::ImChatClient::Window::SetWindowSize(int w, int h) {
+void ImChat::Window::SetWindowSize(int w, int h) {
     m_width = w;
     m_height = h;
 }
 
-void ImChat::ImChatClient::Window::GetWindowSize(int &w, int &h) const {
+void ImChat::Window::GetWindowSize(int &w, int &h) const {
     w = m_width;
     h = m_height;
 }
 
-void ImChat::ImChatClient::Window::BeginFrame() const{
+void ImChat::Window::BeginFrame(){
     // Start ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
 }
 
-void ImChat::ImChatClient::Window::EndFrame() const {
+void ImChat::Window::RenderUIContent() {
+    if (m_rootScreen) {
+        m_rootScreen->Render();
+    }
+}
+
+void ImChat::Window::EndFrame() {
     ImGui::Render();
 
     int width, height;
@@ -101,7 +107,7 @@ void ImChat::ImChatClient::Window::EndFrame() const {
     SDL_GL_SwapWindow(m_window);
 }
 
-ImChat::ImChatClient::Window::~Window()
+ImChat::Window::~Window()
 {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL3_Shutdown();

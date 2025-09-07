@@ -1,9 +1,12 @@
 
 # Create a static library target named "ImChatRuntime"
 # This will be linked by the client and the server
-add_library(ImChatRuntime src/Socket.cpp
-        src/Login.cpp
-        src/ImChatServer.cpp)
+add_library(ImChatRuntime STATIC
+        src/ImChatClient.cpp
+        src/ImChatServer.cpp
+        src/User.cpp
+        src/UserManager.cpp)
+
 
 # Specify public include directories for this library
 # This makes headers in 'include/' available to any target that links to ImChatRuntime
@@ -18,4 +21,5 @@ target_link_libraries(ImChatRuntime
         PUBLIC
         sfml-network
         sfml-system
+        spdlog::spdlog_header_only
 )

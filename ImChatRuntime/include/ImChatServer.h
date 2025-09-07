@@ -6,20 +6,53 @@
 #define IMCHAT_IMCHATSERVER_H
 
 #if !IMCHAT_SERVER
+#include <atomic>
+
+#include "User.h"
+#include "SFML/Network/SocketSelector.hpp"
+#include "SFML/Network/TcpListener.hpp"
 #include "SFML/Network/TcpSocket.hpp"
 
+
 namespace ImChat {
-    namespace Server {
 
-        struct ClientInfo {
-            sf::TcpSocket socket;
-            std::string username;
-        };
+    class ImChatServer {
+    public:
+        ImChatServer();
 
-        void runServer(unsigned short port);
-        void broadcastMessage(const std::string& msg);
-    }
+        void receiveClientData();
+
+        void runServer(unsigned short port, std::atomic<bool>& running);
+
+
+    private:
+        void receiveClientConnection();
+
+        std::vector<User> clients;
+
+        // Create a TCP listener to accept incoming connections
+        sf::TcpListener listener;
+
+        std::vector<std::shared_ptr<sf::TcpSocket>> ClientSockets;
+
+        sf::SocketSelector m_selector;
+
+    };
+
+    /*void broadcastMessage(const std::string& msg) {
+        for (auto& client : clients) {
+            sf::Packet packet;
+            packet << msg;
+
+            sf::Socket::Status status=client.socket.send(packet);
+
+        }
+    }*/
+
+
+
 }
+
 
 #endif
 

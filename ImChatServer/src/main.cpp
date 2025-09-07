@@ -1,23 +1,20 @@
-#include <iostream>
-#include <thread>
+
+#include "ImChatLog.h"
 #include "ImChatServer.h"
 
 int main() {
+    std::atomic<bool> running{true};
 
-    // Run the server in its own thread
-    std::thread serverThread([](){
-        ImChat::Server::runServer(5000);
-    });
+    ImChatLog::info("Welcome to ImChatServer!");
 
-    // Optional: main thread can do other things
-    std::cout << "Server is running in a separate thread.\n";
-    std::cout << "Press Enter to stop...\n";
-    std::cin.get(); // wait for user input
+    ImChatLog::warn("Running on IP {}:{}",ImChat::IMCHAT_SERVER_IP.toString(),ImChat::IMCHAT_PORT);
+
+    ImChat::ImChatServer Server;
+    Server.runServer(ImChat::IMCHAT_PORT, running);
 
 
 
-    // Join the thread before exiting
-    serverThread.join();
+
 
     return 0;
 

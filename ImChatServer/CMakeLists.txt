@@ -10,7 +10,7 @@ add_executable(ImChatServer
 # Add include directories used when compiling ImChatServer
 # PRIVATE means the include path is only needed when compiling this target
 target_include_directories(ImChatServer
-        PRIVATE
+        PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include  # Allows includes like "ImChatServer/SomeHeader.h"
 )
 
@@ -18,6 +18,6 @@ target_include_directories(ImChatServer
 # Link the ImChatRuntime static library to this server target
 # This gives access to socket abstraction, message types, etc.
 target_link_libraries(ImChatServer
-        PRIVATE
+        PUBLIC
         ImChatRuntime
 )

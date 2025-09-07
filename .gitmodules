@@ -7,3 +7,6 @@
 [submodule "dependencies/SFML"]
 	path = dependencies/SFML
 	url = https://github.com/SFML/SFML.git
+[submodule "dependencies/spdlog"]
+	path = dependencies/spdlog
+	url = https://github.com/gabime/spdlog

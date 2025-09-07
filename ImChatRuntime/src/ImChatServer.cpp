@@ -5,54 +5,84 @@
 #include "ImChatServer.h"
 
 #include <iostream>
-#include <vector>
+#include <bits/fs_fwd.h>
 
+#include "UserManager.h"
 #include "SFML/Network/Packet.hpp"
 #include "SFML/Network/TcpListener.hpp"
 
 #if !IMCHAT_SERVER
 
 namespace ImChat {
-    namespace Server {
+    ImChatServer::ImChatServer() {
 
-        std::vector<ClientInfo> clients;
+        listener.setBlocking(false);
+    }
 
-        void broadcastMessage(const std::string& msg) {
-            for (auto& client : clients) {
-                sf::Packet packet;
-                packet << msg;
-                client.socket.send(packet);
+
+
+    void ImChatServer::runServer(unsigned short port, std::atomic<bool>& running) {
+
+        if (listener.listen(port) != sf::Socket::Status::Done) {
+            std::cerr << "Failed to start server on port " << port << "\n";
+            return; // Exit if the port is unavailable
+        }
+        m_selector.add(listener);
+
+        while (running) {
+            // Wait until one of the sockets is ready
+            if (m_selector.wait()) {
+                // Check if the listener (for new connections) wants to receive data i.e. Ready
+                if (m_selector.isReady(listener)) {
+                    receiveClientConnection();
+                }
+            }else {
+                receiveClientData();
             }
         }
 
-        void runServer(unsigned short port) {
-            sf::TcpListener listener;
-            if (listener.listen(port) != sf::Socket::Status::Done) {
-                std::cerr << "Failed to start server on port " << port << "\n";
-                return;
-            }
+    }
 
-            std::cout << "Server listening on port " << port << "...\n";
+    void ImChatServer::receiveClientConnection() {
 
-            while (true) {
-                sf::TcpSocket client;
-                if (listener.accept(client) == sf::Socket::Status::Done) {
-                    ClientInfo info;
-                    info.socket = std::move(client);
+        std::shared_ptr<sf::TcpSocket > IncomingSocket{std::make_shared<sf::TcpSocket>()};
+        listener.accept(*IncomingSocket);
 
-                    // Receive initial username
-                    sf::Packet packet;
-                    if (info.socket.receive(packet) == sf::Socket::Status::Done) {
-                        packet >> info.username;
-                        clients.push_back(std::move(info));
-                        std::cout << "User joined: " << clients.back().username << "\n";
+        // Receive an initial packet from the client
+        sf::Packet packet;
+        std::string msg;
+        if (IncomingSocket->receive(packet) == sf::Socket::Status::Done) {
+            packet >>msg;
+        }
+
+        std::cout << msg << "has connected to Server";
+
+        m_selector.add(*IncomingSocket);
+    }
+
+    void ImChatServer::receiveClientData() {
+
+        for (auto it = ClientSockets.begin(); it != ClientSockets.end(); ) {
+
+            auto& clientSocket = *it;
+
+            if (m_selector.isReady(*it->get())) {
+                sf::Packet packet, sendPacket;
+
+                if (clientSocket->receive(packet) == sf::Socket::Status::Done) {
+                    std::cout << "Received packet with "<<packet.getDataSize()<<" bytes";
+                    std::string text;
+                    packet >> text;
+                    sendPacket << text;
+                    for (auto& client: ClientSockets) {
+
+                        if (client!=clientSocket) {
+                            client->send(packet);
+                        }
                     }
                 }
-
-
             }
         }
-
     }
 }
 
