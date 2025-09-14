@@ -1,9 +1,5 @@
-//
-// Created by theus on 20/08/2025.
-//
+#pragma once
 
-#ifndef IMCHAT_IMCHATCORETYPES_H
-#define IMCHAT_IMCHATCORETYPES_H
 #include <cstdint>
 #include <string>
 #include <unordered_set>
@@ -21,17 +17,16 @@ namespace ImChat {
 
     struct ClientInfo {
 
-        // Delete copy constructor and copy assignment
+
         ClientInfo(const ClientInfo&) = delete;
         ClientInfo& operator=(const ClientInfo&) = delete;
 
-        // Default move constructor and move assignment
+
         ClientInfo(ClientInfo&&) noexcept = default;
         ClientInfo& operator=(ClientInfo&&) noexcept = default;
 
-        // Default constructor
-        ClientInfo() = default;
 
+        ClientInfo() = default;
 
         sf::TcpSocket socket;
     };
@@ -80,11 +75,19 @@ namespace ImChat {
         ChatID()=delete;
     };
 
+    enum class MessageType : uint8_t {
+        USER_LOGGING,    // user login
+        USER_LOGOUT,     // user logout
+        CHAT_MESSAGE,    // normal chat
 
-    struct Message {
-        Message()=default;
     };
 
+    struct Message {
+        //data sent over network
+        MessageType type;
+        std::string sender;
+        std::string text;
+    };
 
     struct Chat {
         Chat()=delete;
@@ -105,7 +108,6 @@ namespace ImChat {
             }
         };
     };
+
 }
 
-
-#endif //IMCHAT_IMCHATCORETYPES_H

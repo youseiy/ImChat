@@ -7,6 +7,7 @@
 #include <iostream>
 #include <bits/fs_fwd.h>
 
+#include "ImChatLog.h"
 #include "UserManager.h"
 #include "SFML/Network/Packet.hpp"
 #include "SFML/Network/TcpListener.hpp"
@@ -53,9 +54,16 @@ namespace ImChat {
         std::string msg;
         if (IncomingSocket->receive(packet) == sf::Socket::Status::Done) {
             packet >>msg;
+
         }
 
-        std::cout << msg << "has connected to Server";
+        ImChatLog::info(" {} has connected to Server",msg);
+
+
+        sf::Packet outpacket;
+
+        outpacket<<"Connected to server. ";
+        IncomingSocket->send(outpacket);
 
         m_selector.add(*IncomingSocket);
     }

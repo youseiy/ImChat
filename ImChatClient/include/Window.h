@@ -43,6 +43,8 @@ namespace ImChat {
         float m_height;
     };
 
+
+
     template<typename TUIScreen, typename... Args>
     void Window::AddUIContent(Args&&... args) {
         m_rootScreen = std::make_unique<TUIScreen>(shared_from_this(), std::forward<Args>(args)...);

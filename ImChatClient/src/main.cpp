@@ -9,7 +9,6 @@
 #include "Window.h"
 
 
-
 int main(int, char**)
 {
     int value = 42;
@@ -18,9 +17,12 @@ int main(int, char**)
 
     ImChat::ImChatClient client;
 
+
     std::shared_ptr<ImChat::Window> window=ImChat::Window::Create(std::string{"ImChat Client"}, 800, 600);
 
     bool running = true;
+
+
 
     window->AddUIContent<ImChat::UILoginScreen>(std::string{"LoginScreen"},client);
 

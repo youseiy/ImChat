@@ -1,14 +1,13 @@
 
-
 add_subdirectory(glad)
 
-
 add_subdirectory(SFML)
-
 
 add_subdirectory(SDL3)
 
 add_subdirectory(spdlog)
+
+add_subdirectory(json)
 
 # -------------------------------
 # ImGui (submodule wrapper)
@@ -35,6 +34,7 @@ target_include_directories(imgui
         ${CMAKE_CURRENT_SOURCE_DIR}/imgui/misc/cpp       # ImguiSTD
         ${CMAKE_CURRENT_SOURCE_DIR}/SDL3/include         # SDL3 headers
         #${CMAKE_CURRENT_SOURCE_DIR}/spdlog/include       # spdlog headers
+        ${CMAKE_CURRENT_SOURCE_DIR}/json/include
 )
 
 # Link SDL3 library

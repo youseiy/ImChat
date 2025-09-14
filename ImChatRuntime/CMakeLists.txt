@@ -22,4 +22,5 @@ target_link_libraries(ImChatRuntime
         sfml-network
         sfml-system
         spdlog::spdlog_header_only
+        nlohmann_json::nlohmann_json
 )
