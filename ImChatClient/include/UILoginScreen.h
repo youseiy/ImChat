@@ -4,7 +4,7 @@
 
 #ifndef IMCHAT_UILOGINSCREEN_H
 #define IMCHAT_UILOGINSCREEN_H
-#include "ImChatClient.h"
+#include "Client.h"
 #include "UIScreen.h"
 
 
@@ -14,7 +14,7 @@ namespace ImChat {
         UILoginScreen()=delete;
 
 
-        explicit UILoginScreen(const std::shared_ptr<Window>& InRenderWindow,const std::string& InScreenName,ImChatClient& InClient)
+        explicit UILoginScreen(const std::shared_ptr<Window>& InRenderWindow,const std::string& InScreenName,Client& InClient)
             : UIScreen(InRenderWindow,InScreenName,InClient){
 
         }

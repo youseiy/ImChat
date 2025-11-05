@@ -2,18 +2,22 @@
 // Created by theus on 07/09/2025.
 //
 
-#include "ImChatClient.h"
-#include <iostream>
+#include "Client.h"
 #include "ImChatLog.h"
 #include "SFML/Network/IpAddress.hpp"
 #include "SFML/Network/Packet.hpp"
 
 
-ImChat::ImChatClient::ImChatClient() {
+ImChat::Client::Client() {
 
 }
 
-bool ImChat::ImChatClient::Login(const std::string& username, const std::string& password,
+ImChat::Client::~Client() {
+    StopListeningServer();
+    Loggout();
+}
+
+bool ImChat::Client::Login(const std::string& username, const std::string& password,
                                  const sf::IpAddress& serverIp, unsigned short port) {
 
     m_socket.setBlocking(true);
@@ -24,7 +28,6 @@ bool ImChat::ImChatClient::Login(const std::string& username, const std::string&
         ImChatLog::error("Failed to connect to server");
         return false;
     }
-
 
     // Send username
     sf::Packet packet;
@@ -53,11 +56,50 @@ bool ImChat::ImChatClient::Login(const std::string& username, const std::string&
 
     ImChatLog::warn("Sever response {}",response);
 
+
+    StartListeningServer();
+
     return true;
+}
+
+void ImChat::Client::SendMessage(const std::string &message) {
 
 
 }
 
-sf::TcpSocket &ImChat::ImChatClient::GetMutableTcpSocket() {
+void ImChat::Client::StartListeningServer() {
+
+    m_server_listener_thread=std::jthread{&Client::listenServer, this};
+
+
+}
+
+void ImChat::Client::StopListeningServer() {
+
+    m_server_listener_thread.request_stop();
+}
+
+void ImChat::Client::listenServer() {
+
+    ImChatLog::info("Listening to server...");
+
+    while (true) {
+        // Wait for server reply
+        sf::Packet reply;
+        if (m_socket.receive(reply) == sf::Socket::Status::Done) {
+            std::string response;
+
+            reply >> response;
+
+            ImChatLog::Connection::warn("Server response {}",response);
+        }
+    }
+}
+
+sf::TcpSocket &ImChat::Client::GetMutableTcpSocket() {
     return m_socket;
+}
+
+void ImChat::Client::Loggout() {
+    m_socket.disconnect();
 }

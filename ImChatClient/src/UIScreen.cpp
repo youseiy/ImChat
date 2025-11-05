@@ -9,7 +9,7 @@
 
 namespace ImChat {
 
-    UIScreen::UIScreen(const std::shared_ptr<Window>& InRenderWindow,std::string  InScreenName,ImChatClient& InClient) :
+    UIScreen::UIScreen(const std::shared_ptr<Window>& InRenderWindow,std::string  InScreenName,Client& InClient) :
     m_owning_window(InRenderWindow),
     m_screen_name(std::move(InScreenName)),
     m_owning_client(InClient) {

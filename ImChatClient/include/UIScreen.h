@@ -2,7 +2,7 @@
 #include <memory>
 #include <string>
 
-#include "ImChatClient.h"
+#include "Client.h"
 
 
 namespace ImChat {
@@ -10,7 +10,7 @@ namespace ImChat {
 
     class UIScreen {
     public:
-        explicit UIScreen(const std::shared_ptr<Window>& InRenderWindow,std::string  InScreenName,ImChatClient& InClient);
+        explicit UIScreen(const std::shared_ptr<Window>& InRenderWindow,std::string  InScreenName,Client& InClient);
 
         virtual ~UIScreen() = default;
         virtual void Render() = 0;
@@ -23,6 +23,6 @@ namespace ImChat {
 
         std::shared_ptr<Window> m_owning_window;
 
-        ImChatClient& m_owning_client;
+        Client& m_owning_client;
     };
 }

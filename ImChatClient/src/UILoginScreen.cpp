@@ -4,7 +4,7 @@
 
 #include "UILoginScreen.h"
 
-#include "ImChatCoreTypes.h"
+#include "CoreTypes.h"
 #include "imgui.h"
 #include "imgui_stdlib.h"
 #include "UIChatLobby.h"

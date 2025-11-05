@@ -11,7 +11,7 @@
 namespace ImChat {
     class UIChatLobby : public UIScreen{
     public:
-        UIChatLobby(const std::shared_ptr<Window> &InRenderWindow, const std::string &InScreenName,ImChatClient& InClient)
+        UIChatLobby(const std::shared_ptr<Window> &InRenderWindow, const std::string &InScreenName,Client& InClient)
             : UIScreen{InRenderWindow, InScreenName,InClient} {
         }
 

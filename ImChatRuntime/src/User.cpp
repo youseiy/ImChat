@@ -9,3 +9,7 @@
 ImChat::UserName ImChat::User::GetUserName() const {
     return m_user_name;
 }
+
+ImChat::Connection& ImChat::User::GetConnection() {
+    return m_clientConnection;
+}

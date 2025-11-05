@@ -16,9 +16,9 @@
 
 namespace ImChat {
 
-    class ImChatServer {
+    class Server {
     public:
-        ImChatServer();
+        Server();
 
         void receiveClientData();
 
@@ -26,7 +26,9 @@ namespace ImChat {
 
 
     private:
+
         void receiveClientConnection();
+        void updateClientsData();
 
         std::vector<User> clients;
 

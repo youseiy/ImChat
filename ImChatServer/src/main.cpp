@@ -1,6 +1,6 @@
 
 #include "ImChatLog.h"
-#include "ImChatServer.h"
+#include "Server.h"
 
 int main() {
     std::atomic<bool> running{true};
@@ -9,7 +9,7 @@ int main() {
 
     ImChatLog::warn("Running on IP {}:{}",ImChat::IMCHAT_SERVER_IP.toString(),ImChat::IMCHAT_PORT);
 
-    ImChat::ImChatServer Server;
+    ImChat::Server Server;
     Server.runServer(ImChat::IMCHAT_PORT, running);
 
 

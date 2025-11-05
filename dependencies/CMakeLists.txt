@@ -9,6 +9,8 @@ add_subdirectory(spdlog)
 
 add_subdirectory(json)
 
+add_subdirectory(uuid_v4)
+
 # -------------------------------
 # ImGui (submodule wrapper)
 # -------------------------------
@@ -24,17 +26,15 @@ file(GLOB IMGUI_SOURCES
 # Create static library target
 add_library(imgui STATIC ${IMGUI_SOURCES})
 
-
-
 # Include directories
 target_include_directories(imgui
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/imgui                 # ImGui root
-        ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends       # Backend headers
-        ${CMAKE_CURRENT_SOURCE_DIR}/imgui/misc/cpp       # ImguiSTD
-        ${CMAKE_CURRENT_SOURCE_DIR}/SDL3/include         # SDL3 headers
+        ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends        # ImGui Backend headers
+        ${CMAKE_CURRENT_SOURCE_DIR}/imgui/misc/cpp        # ImguiSTD
+        ${CMAKE_CURRENT_SOURCE_DIR}/SDL3/include          # SDL3 headers
         #${CMAKE_CURRENT_SOURCE_DIR}/spdlog/include       # spdlog headers
-        ${CMAKE_CURRENT_SOURCE_DIR}/json/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/json/include          #json
 )
 
 # Link SDL3 library

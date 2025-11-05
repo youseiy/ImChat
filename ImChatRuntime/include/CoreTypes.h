@@ -15,26 +15,28 @@ namespace ImChat {
     //Ip - default local host
     inline const sf::IpAddress IMCHAT_SERVER_IP{127,0,0,1};
 
-    struct ClientInfo {
+    struct Connection {
 
+        Connection(const Connection&) = delete;
 
-        ClientInfo(const ClientInfo&) = delete;
-        ClientInfo& operator=(const ClientInfo&) = delete;
+        Connection() = default;
 
+        explicit Connection(const std::shared_ptr<sf::TcpSocket>& in_connection)
+        {
+            socket=in_connection;
+        }
 
-        ClientInfo(ClientInfo&&) noexcept = default;
-        ClientInfo& operator=(ClientInfo&&) noexcept = default;
+        Connection& operator=(const Connection&) = delete;
 
+        Connection(Connection&&) noexcept = default;
+        Connection& operator=(Connection&&) noexcept = default;
 
-        ClientInfo() = default;
-
-        sf::TcpSocket socket;
+        std::shared_ptr<sf::TcpSocket> socket;
     };
 
     struct UserID {
 
         std::uint64_t id;
-
 
         bool operator==(const UserID& other) const
         {
@@ -75,26 +77,16 @@ namespace ImChat {
         ChatID()=delete;
     };
 
-    enum class MessageType : uint8_t {
-        USER_LOGGING,    // user login
-        USER_LOGOUT,     // user logout
-        CHAT_MESSAGE,    // normal chat
 
-    };
 
-    struct Message {
-        //data sent over network
-        MessageType type;
-        std::string sender;
-        std::string text;
-    };
+
 
     struct Chat {
         Chat()=delete;
 
         std::uint64_t id;
 
-        std::vector<Message> m_messages;
+        //std::vector<Message> m_messages;
 
         std::unordered_set<UserID> m_members;
 

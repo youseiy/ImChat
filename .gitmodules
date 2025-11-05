@@ -13,3 +13,6 @@
 [submodule "dependencies/json"]
 	path = dependencies/json
 	url = https://github.com/nlohmann/json
+[submodule "dependencies/uuid_v4"]
+	path = dependencies/uuid_v4
+	url = https://github.com/crashoz/uuid_v4

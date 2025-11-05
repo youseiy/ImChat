@@ -3,7 +3,7 @@
 #include <glad/glad.h>      // Make sure glad is included before OpenGL headers
 #include <imgui.h>
 #include <backends/imgui_impl_sdl3.h>
-#include "ImChatClient.h"
+#include "Client.h"
 #include "ImChatLog.h"
 #include "UILoginScreen.h"
 #include "Window.h"
@@ -15,7 +15,7 @@ int main(int, char**)
 
     ImChatLog::info("Welcome to ImChat Client!");
 
-    ImChat::ImChatClient client;
+    ImChat::Client client;
 
 
     std::shared_ptr<ImChat::Window> window=ImChat::Window::Create(std::string{"ImChat Client"}, 800, 600);

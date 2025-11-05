@@ -4,39 +4,39 @@
 
 #ifndef IMCHAT_USER_H
 #define IMCHAT_USER_H
-#include <utility>
 
-#include "ImChatCoreTypes.h"
+#include "CoreTypes.h"
+#include "UUID.h"
 
 namespace ImChat {
+
+
+
     class User {
     public:
+        User()=default;
 
         // Constructor
-        User(ClientInfo&& InClientInfo, UserName  InUserName)
-            : m_clientInfo(std::move(InClientInfo)), m_user_name(std::move(InUserName)) {}
+        User(Connection InConnection, UserName InUserName)
+            : m_clientConnection(std::move(InConnection)), m_user_name(std::move(InUserName)) {}
 
-        // Delete copy constructor/assignment (cannot copy sockets)
-        User(const User&) = delete;
-        User& operator=(const User&) = delete;
 
-        // Default move constructor/assignment (allow moving)
-        User(User&&) noexcept = default;
-        User& operator=(User&&) noexcept = default;
 
-        // Equality operator (compare by username)
+
+
         bool operator==(const User& other) const {
             return m_user_name.username == other.m_user_name.username;
         }
 
-
         [[nodiscard]] UserName GetUserName() const;
+        [[nodiscard]] Connection& GetConnection();
 
     private:
-        ClientInfo m_clientInfo;
-        UserName m_user_name;
+        ImChat::Connection m_clientConnection;
+        ImChat::UserName m_user_name;
+        ImChat::UUID m_internal_uuid;
     };
-
+    using UserPtr=std::shared_ptr<User>;
 }
 
 
