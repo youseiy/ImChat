@@ -11,6 +11,8 @@ add_subdirectory(json)
 
 add_subdirectory(uuid_v4)
 
+
+
 # -------------------------------
 # ImGui (submodule wrapper)
 # -------------------------------
@@ -35,6 +37,7 @@ target_include_directories(imgui
         ${CMAKE_CURRENT_SOURCE_DIR}/SDL3/include          # SDL3 headers
         #${CMAKE_CURRENT_SOURCE_DIR}/spdlog/include       # spdlog headers
         ${CMAKE_CURRENT_SOURCE_DIR}/json/include          #json
+        ${CMAKE_CURRENT_SOURCE_DIR}/stb
 )
 
 # Link SDL3 library

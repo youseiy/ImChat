@@ -14,10 +14,7 @@ namespace ImChat {
         UILoginScreen()=delete;
 
 
-        explicit UILoginScreen(const std::shared_ptr<Window>& InRenderWindow,const std::string& InScreenName,Client& InClient)
-            : UIScreen(InRenderWindow,InScreenName,InClient){
-
-        }
+        explicit UILoginScreen(const std::shared_ptr<Window>& InRenderWindow,const std::string& InScreenName,Client& InClient);
 
     private:
         void Render() override;

@@ -18,7 +18,7 @@ int main(int, char**)
     ImChat::Client client;
 
 
-    std::shared_ptr<ImChat::Window> window=ImChat::Window::Create(std::string{"ImChat Client"}, 800, 600);
+    std::shared_ptr<ImChat::Window> window=ImChat::Window::Create(std::string{"ImChat Client"}, 640, 853);
 
     bool running = true;
 

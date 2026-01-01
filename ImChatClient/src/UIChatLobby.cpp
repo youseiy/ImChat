@@ -19,113 +19,77 @@ void ImChat::UIChatLobby::Render() {
 
 
 ImGui::Begin(m_screen_name.c_str(), nullptr,
-    ImGuiWindowFlags_MenuBar |
-    ImGuiWindowFlags_NoResize |
-    ImGuiWindowFlags_NoCollapse |
-    ImGuiWindowFlags_NoTitleBar |
-    ImGuiWindowFlags_NoMove);
+    ImGuiWindowFlags_NoDecoration);
 
-// Split into two columns: chat + friends
-ImGui::Columns(2, nullptr, true);
 
-// ---- Left: Chat Tabs ----
-if (!m_openChats.empty() && ImGui::BeginTabBar("ChatTabs", ImGuiTabBarFlags_Reorderable)) {
-    for (size_t i = 0; i < m_openChats.size(); ++i) {
-        std::string& friendName = m_openChats[i];
 
-        ImGuiTabItemFlags tab_flags = ImGuiTabItemFlags_None;
 
-        bool open = true;
-        if (friendName == m_activeChat) {
-            tab_flags |= ImGuiTabItemFlags_SetSelected;
-        }
+    // Avatar do seu próprio usuário
+    ImGui::Image(ImTextureRef(), ImVec2(50, 50));
+    ImGui::SameLine();
+    ImGui::BeginGroup();
+    ImGui::TextColored(ImVec4(0.2f, 0.6f, 1.0f, 1.0f), "%s", "#Nickname");
+    ImGui::Text("%s", "#Status");
+    ImGui::EndGroup();
 
-        if (ImGui::BeginTabItem(friendName.c_str(), &open, tab_flags)) {
-            m_activeChat = friendName;
+    ImGui::Separator();
 
-            // Chat history
-            ImGui::BeginChild("ChatHistory", ImVec2(0, -80), true, ImGuiWindowFlags_HorizontalScrollbar);
-            auto& chatMessages = m_chatLogs[friendName];
-            for (const auto& msg : chatMessages) {
-                ImGui::TextWrapped("%s", msg.c_str());
-            }
-            if (m_scrollToBottom) {
-                ImGui::SetScrollHereY(1.0f);
-                m_scrollToBottom = false;
-            }
-            ImGui::EndChild();
+    // Estrutura para armazenar usuários com avatar
+    struct User {
+        User()=default;
 
-            // Input
-            ImGui::PushItemWidth(-100);
-            ImGui::InputTextMultiline("##ChatInput", m_inputBuffer, IM_ARRAYSIZE(m_inputBuffer),
-                                      ImVec2(0, 70),
-                                      ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_CtrlEnterForNewLine | ImGuiInputTextFlags_EnterReturnsTrue);
-            ImGui::PopItemWidth();
+        std::string name;
+        ImTextureRef avatar; // a textura do avatar
+        std::string status; // opcional: online/offline
+    };
 
-            ImGui::SameLine();
-            if (ImGui::Button("Send", ImVec2(90, 70))) {
-                if (strlen(m_inputBuffer) > 0) {
-                    chatMessages.push_back("You: " + std::string(m_inputBuffer));
-                    m_inputBuffer[0] = '\0';
-                    m_scrollToBottom = true;
+    // Função para desenhar um grupo de usuários
+    auto DrawListGroup = [](const char* group_name, const std::vector<User>& users)
+    {
+        if (ImGui::TreeNode(group_name))
+        {
+            for (const auto& user : users)
+            {
+                ImGui::Image(user.avatar, ImVec2(30, 30)); // avatar do usuário
+                ImGui::SameLine();
+
+                // Clicável com Selectable
+                if (ImGui::Selectable(user.name.c_str()))
+                {
+
                 }
+
+                // Opcional: mostrar status colorido ao lado
+                ImGui::SameLine();
+                ImGui::TextColored(
+                    user.status == "Online" ? ImVec4(0,1,0,1) : ImVec4(1,0,0,1),
+                    "(%s)", user.status.c_str()
+                );
             }
-
-            ImGui::EndTabItem();
+            ImGui::TreePop();
         }
+    };
 
-        // If tab closed
-        if (!open) {
-            if (m_activeChat == friendName) m_activeChat.clear();
-            m_openChats.erase(m_openChats.begin() + i);
-            --i;
-        }
-    }
-    ImGui::EndTabBar();
-}
+    // Exemplo de uso
+    std::vector<User> favorites;
 
-// ---- Right: Friends list ----
-ImGui::NextColumn();
-ImGui::BeginChild("FriendsList", ImVec2(0, 0), true);
-ImGui::Text("Friends");
-ImGui::Separator();
+    User user;
+    user.name="Matheus";
+    user.status="Online";
 
+    favorites.push_back(user);
 
-    // Show your own username at the top
-    ImGui::TextDisabled("Yousei");
-    ImGui::Separator();
+    std::vector<User> groups;
+
+    groups.push_back(user);
+
+    std::vector<User> friends;
+
+    DrawListGroup("Favorites", favorites);
+    DrawListGroup("Groups", groups);
+    DrawListGroup("Friends", friends);
 
 
-    for (auto& friendName : m_friends) {
-        bool isSelected = (m_activeChat == friendName);
-        if (ImGui::Selectable(friendName.c_str(), isSelected)) {
-            // Only add a new tab if it isn’t already open
-            if (std::ranges::find(m_openChats.begin(), m_openChats.end(), friendName) == m_openChats.end()) {
-                m_openChats.push_back(friendName); // friendName must be std::string
-            }
-            m_activeChat = friendName; // Switch to this chat
-        }
-    }
-
-    // Groups section
-    ImGui::Separator();
-    ImGui::Text("Groups");
-    ImGui::Separator();
-
-    for (auto& groupName : m_groups) { // assuming m_groups is std::vector<std::string>
-        bool isSelected = (m_activeChat == groupName);
-        if (ImGui::Selectable(groupName.c_str(), isSelected)) {
-            // Only add a new tab if it isn’t already open
-            if (std::ranges::find(m_openChats.begin(), m_openChats.end(), groupName) == m_openChats.end()) {
-                m_openChats.push_back(groupName);
-            }
-            m_activeChat = groupName;
-        }
-    }
-
-ImGui::EndChild();
-
-ImGui::Columns(1);
 ImGui::End();
 
 

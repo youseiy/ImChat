@@ -12,9 +12,21 @@
 #include "SFML/Network/IpAddress.hpp"
 
 namespace ImChat {
+    UILoginScreen::UILoginScreen(const std::shared_ptr<Window> &InRenderWindow, const std::string &InScreenName,
+        Client &InClient) : UIScreen(InRenderWindow,InScreenName,InClient)
+    {
+        ImGui::GetStyle().ScaleAllSizes(3);
+    }
+
     void UILoginScreen::Render() {
 
+       /* ImGui::ShowDemoWindow();
+
+        return;*/
+
         if (logged_in) return;
+
+
 
 
 
@@ -28,18 +40,29 @@ namespace ImChat {
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
 
         ImGui::Begin("ImChat",nullptr,
-             ImGuiWindowFlags_NoResize |
-             ImGuiWindowFlags_NoCollapse |
-             ImGuiWindowFlags_NoTitleBar |
-             ImGuiWindowFlags_NoMove);
+             ImGuiWindowFlags_NoDecoration);
 
-        ImGui::Dummy(ImVec2(150, 300));
+        ImGui::Dummy(ImVec2(0, 200));
 
-        ImGui::InputText("User", &m_username);
+        //todo:logo
+        //ImGui::Image(ImTextureRef(),ImVec2(100,100));
+        m_username.resize(32);
 
-        ImGui::InputText("Password", &m_password, ImGuiInputTextFlags_Password);
+        ImGui::Text("Email");
+        ImGui::PushID("LoginInputID");
+        ImGui::InputTextWithHint("", "Email", m_username.data(), m_username.capacity(), ImGuiInputTextFlags_None);
+        ImGui::PopID();
 
-;
+        ImGui::Dummy(ImVec2(50,0));
+
+        m_password.resize(32);
+
+        ImGui::Text("Password");
+        ImGui::PushID("PasswordInputID");
+        ImGui::InputTextWithHint("", "Password", m_password.data(), m_password.capacity(), ImGuiInputTextFlags_Password,nullptr,&m_password);
+        ImGui::PopID();
+
+        ImGui::Dummy(ImVec2(0, 20));
 
         if (ImGui::Button("Login")) {
 
@@ -47,16 +70,20 @@ namespace ImChat {
 
                 GetOwningWindow()->AddUIContent<UIChatLobby>(std::string{"ChatScreen"},m_owning_client);
                 logged_in = true;
-
             }
         };
 
-        ImGui::SameLine();
+        ImGui::SameLine(0,250);
 
         bool bRememberLogin = false;
+
         ImGui::Checkbox("Remember",&bRememberLogin);
 
         ImGui::Spacing();
+
+        ImGui::Dummy(ImVec2(0, 180));
+
+        ImGui::Text("Dont have an account?");
 
         ImGui::Button("Register");
 
