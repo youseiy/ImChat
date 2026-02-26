@@ -21,6 +21,7 @@ add_library(ImChatRuntime STATIC
         include/Socket/Socket.h
         include/Socket/SFMLSocket.h
         src/Socket/SFMLSocket.cpp
+        src/Thread.cpp
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")

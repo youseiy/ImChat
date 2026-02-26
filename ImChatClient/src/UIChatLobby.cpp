@@ -18,8 +18,8 @@ void ImChat::UIChatLobby::Render() {
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
 
 
-ImGui::Begin(m_screen_name.c_str(), nullptr,
-    ImGuiWindowFlags_NoDecoration);
+    ImGui::Begin(m_screen_name.c_str(), nullptr,
+        ImGuiWindowFlags_NoDecoration);
 
 
 
@@ -34,64 +34,91 @@ ImGui::Begin(m_screen_name.c_str(), nullptr,
 
     ImGui::Separator();
 
-    // Estrutura para armazenar usuários com avatar
-    struct User {
-        User()=default;
 
-        std::string name;
-        ImTextureRef avatar; // a textura do avatar
-        std::string status; // opcional: online/offline
-    };
-
-    // Função para desenhar um grupo de usuários
-    auto DrawListGroup = [](const char* group_name, const std::vector<User>& users)
+    auto DrawListGroup = [this](const char* group_name,std::vector<ImChat::User>& users)
     {
         if (ImGui::TreeNode(group_name))
         {
-            for (const auto& user : users)
+            for (User& user : users)
             {
-                ImGui::Image(user.avatar, ImVec2(30, 30)); // avatar do usuário
-                ImGui::SameLine();
+                ImGui::PushID(user.GetUserName().username.c_str());
 
-                // Clicável com Selectable
-                if (ImGui::Selectable(user.name.c_str()))
+                // Make the whole row clickable
+                if (ImGui::Selectable("##user_row", false,
+                    ImGuiSelectableFlags_Highlight,
+                    ImVec2(0, 36)))
                 {
+                    // CLICK EVENT
+                    // e.g. Open profile, select user, etc.
+
 
                 }
 
-                // Opcional: mostrar status colorido ao lado
+                if (ImGui::BeginPopupContextItem("user_menu"))
+                {
+                    if (ImGui::MenuItem("Send Message")) {
+
+                        //ImGui::Viewport;
+                        ChatInstance instance;
+                        instance.User=&user;
+                        instance.ChatOpen=true;
+                        mOpenChats.emplace_back(instance);
+
+                        auto newChat = std::make_unique<ImChat::ChatThread>();
+                        newChat->Start();
+                        mOpens.push_back(std::move(newChat));
+                    }
+
+                    if (ImGui::MenuItem("Block"))
+                        printf("Block clicked for %s\n", user.GetUserName().username.c_str());
+
+                    ImGui::EndPopup();
+                }
+
+                ImGui::SameLine(0, 0);
+
+                ImGui::Image(user.GetDisplay().ProfileTexture, ImVec2(30, 30));
+
                 ImGui::SameLine();
+
                 ImGui::TextColored(
-                    user.status == "Online" ? ImVec4(0,1,0,1) : ImVec4(1,0,0,1),
-                    "(%s)", user.status.c_str()
+                    user.GetStatus().Str() == "Online" ? ImVec4(0,1,0,1) : ImVec4(1,0,0,1),
+                    "%s (%s)",
+                    user.GetUserName().username.c_str(),
+                    user.GetStatus().Str()
                 );
+
+
+
+                ImGui::PopID();
             }
             ImGui::TreePop();
         }
     };
 
-    // Exemplo de uso
-    std::vector<User> favorites;
 
-    User user;
-    user.name="Matheus";
-    user.status="Online";
-
-    favorites.push_back(user);
-
-    std::vector<User> groups;
-
-    groups.push_back(user);
-
-    std::vector<User> friends;
-
-    DrawListGroup("Favorites", favorites);
-    DrawListGroup("Groups", groups);
+    //DrawListGroup("Favorites", favorites);
+    //DrawListGroup("Groups", groups);
     DrawListGroup("Friends", friends);
 
+    DrawChatWindows();
 
 ImGui::End();
 
 
+}
+
+void ImChat::UIChatLobby::DrawChatWindows() const {
+
+    for (auto& chat: mOpenChats) {
+
+        if (!chat.User)
+            continue;
+
+        ImGui::Begin(chat.User->GetUserNameStr().c_str());
+            ImGui::TextColored(ImVec4(0,1,0,1),"Test");
+        ImGui::End();
+
+    }
 }
 

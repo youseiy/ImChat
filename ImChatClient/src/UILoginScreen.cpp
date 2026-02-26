@@ -27,9 +27,6 @@ namespace ImChat {
         if (logged_in) return;
 
 
-
-
-
         int w;
         int h;
 

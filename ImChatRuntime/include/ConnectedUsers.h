@@ -11,11 +11,13 @@ struct ConnectedUsers {
 
     void serialize(ISerializer& s) const {
 
-        for (const auto& user : m_connectedUsers) {
+        for (const std::shared_ptr<ImChat::User>& user : m_connectedUsers) {
+
+            std::string username = user->GetUserNameStr();
 
             s.writeArrayValue("connected_users",
-                {"username",
-                    user->GetUserName().username});
+                JsonField{"username",
+                    username});
         };
     };
 

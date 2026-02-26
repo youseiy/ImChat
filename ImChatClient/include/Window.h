@@ -2,6 +2,7 @@
 #include <string>
 
 #include "UIScreen.h"
+#include "SDL3/SDL_oldnames.h"
 #include "SDL3/SDL_video.h"
 
 
@@ -12,12 +13,43 @@ namespace ImChat {
             return std::shared_ptr<Window>(new Window(name, w, h));
         }
 
-        // Delete copy and move semantics to prevent copying the SDL_Window*
-        Window(const Window&) = delete;
-        Window& operator=(const Window&) = delete;
-        Window(Window&&) = delete;
-        Window& operator=(Window&&) = delete;
-        Window()=delete;
+
+        // Enable move
+        Window(Window&& other) noexcept
+            : m_rootScreen(std::move(other.m_rootScreen)),
+              m_window(other.m_window),
+              gl_context(other.gl_context),
+              m_width(other.m_width),
+              m_height(other.m_height)
+        {
+            other.m_window = nullptr;
+            other.gl_context = nullptr;
+            other.m_width = 0;
+            other.m_height = 0;
+
+
+        }
+
+        Window& operator=(Window&& other) noexcept {
+            if (this != &other) {
+                m_rootScreen = std::move(other.m_rootScreen);
+
+                // Clean up current SDL resources if exist
+                if (m_window) SDL_DestroyWindow(m_window);
+                if (gl_context) SDL_GL_DestroyContext(gl_context);
+
+                m_window = other.m_window;
+                gl_context = other.gl_context;
+                m_width = other.m_width;
+                m_height = other.m_height;
+
+                other.m_window = nullptr;
+                other.gl_context = nullptr;
+                other.m_width = 0;
+                other.m_height = 0;
+            }
+            return *this;
+        }
 
         void SetWindowSize(int w, int h);
         void GetWindowSize(int& w, int& h) const;

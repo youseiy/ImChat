@@ -13,6 +13,7 @@ add_executable(ImChatClient
         src/UIScreen.cpp
         src/UILoginScreen.cpp
         src/UIChatLobby.cpp
+        src/ChatThread.cpp
 )
 
 # Specify include directories for ImChatClient

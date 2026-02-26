@@ -61,11 +61,18 @@ ImChat::Window::Window(const std::string& Name,float w, float h):
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    (void)io;
+
+   // io.BackendFlags|=ImGuiBackendFlags_PlatformHasViewports;
+
+    //io.BackendFlags|=ImGuiBackendFlags_RendererHasViewports;
+
+   // io.ConfigFlags|= ImGuiConfigFlags_ViewportsEnable;
+    io.ConfigFlags|= ImGuiConfigFlags_DockingEnable;
 
     ImGui::StyleColorsDark();
     ImGui_ImplSDL3_InitForOpenGL(m_window, gl_context);
     ImGui_ImplOpenGL3_Init("#version 330 core");
+
 };
 
 

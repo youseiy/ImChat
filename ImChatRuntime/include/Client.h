@@ -35,6 +35,8 @@ namespace ImChat {
             const sf::IpAddress& serverIp,
             unsigned short port);
 
+        void SendMessageA(const std::string &message);
+
 
         void SendMessage(const std::string& message);
 

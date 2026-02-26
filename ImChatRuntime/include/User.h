@@ -20,7 +20,8 @@ namespace ImChat {
         User(Connection InConnection, UserName InUserName)
             : m_clientConnection(std::move(InConnection)), m_user_name(std::move(InUserName)) {}
 
-
+        User( UserName InUserName)
+            : m_user_name(std::move(InUserName)) {}
 
 
 
@@ -29,9 +30,14 @@ namespace ImChat {
         }
 
         [[nodiscard]] UserName GetUserName() const;
+        [[nodiscard]] std::string GetUserNameStr() const;
         [[nodiscard]] Connection& GetConnection();
-
+        [[nodiscard]] ImChat::Status GetStatus() const;
+        [[nodiscard]] ImChat::Display GetDisplay() const;
     private:
+
+        ImChat::Display m_display;
+        ImChat::Status m_status;
         ImChat::Connection m_clientConnection;
         ImChat::UserName m_user_name;
         ImChat::UUID m_internal_uuid;

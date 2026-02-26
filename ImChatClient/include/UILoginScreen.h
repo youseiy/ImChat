@@ -22,7 +22,7 @@ namespace ImChat {
         std::string m_username{};
         std::string m_password{};
 
-        float logged_in=false;
+        bool logged_in=false;
 
     };
 } // ImChat

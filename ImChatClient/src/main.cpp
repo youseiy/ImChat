@@ -23,7 +23,6 @@ int main(int, char**)
     bool running = true;
 
 
-
     window->AddUIContent<ImChat::UILoginScreen>(std::string{"LoginScreen"},client);
 
     while (running) {
@@ -33,16 +32,25 @@ int main(int, char**)
             if (event.type == SDL_EVENT_QUIT)
                 running = false;
 
-            // Detect SDL window resize
+
             if (event.type == SDL_EVENT_WINDOW_RESIZED) {
                 window->SetWindowSize(event.window.data1,event.window.data2);
             }
         }
+
         window->BeginFrame();
 
         window->RenderUIContent();
 
         window->EndFrame();
+
+
+        if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            // TODO for OpenGL: restore current GL context.
+        }
     }
 
     return 0;

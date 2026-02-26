@@ -5,6 +5,8 @@
 #include <unordered_set>
 #include <vector>
 
+
+#include "../../dependencies/imgui/imgui.h"
 #include "SFML/Network/IpAddress.hpp"
 #include "SFML/Network/TcpSocket.hpp"
 
@@ -53,9 +55,12 @@ namespace ImChat {
     };
 
     struct UserName {
-
-        bool operator==(const UserName& other) const {
+        bool operator==(const UserName &other) const {
             return username == other.username;
+        }
+        // Implicit conversion to std::string
+        operator std::string() const {
+            return username;
         }
 
         std::string username;
@@ -75,6 +80,33 @@ namespace ImChat {
 
     struct ChatID {
         ChatID()=delete;
+    };
+
+    struct Status {
+
+        enum class EStatus {
+            Online,
+            Offline,
+        };
+
+        void Set( EStatus NewStatus) {
+            m_status=NewStatus;
+        }
+
+        [[nodiscard]] EStatus Get() const {
+            return m_status;
+        }
+
+        [[nodiscard]] std::string_view Str() const{
+            return m_status==EStatus::Online ? "Online" : "Offline";
+        }
+
+    private:
+        EStatus m_status{EStatus::Offline};
+    };
+
+    struct Display {
+        ImTextureRef ProfileTexture;
     };
 
 
@@ -100,6 +132,5 @@ namespace ImChat {
             }
         };
     };
-
 }
 
