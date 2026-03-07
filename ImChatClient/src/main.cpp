@@ -24,7 +24,6 @@ int main(int, char**)
 
 
     window->AddUIContent<ImChat::UILoginScreen>(std::string{"LoginScreen"},client);
-
     while (running) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -45,13 +44,14 @@ int main(int, char**)
         window->EndFrame();
 
 
-        if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        /*if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
             // TODO for OpenGL: restore current GL context.
-        }
+        }*/
     }
+
 
     return 0;
 }

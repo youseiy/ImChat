@@ -67,6 +67,8 @@ namespace ImChat {
         Window(const std::string& Name,float w, float h);
 
         std::unique_ptr<UIScreen> m_rootScreen;
+        std::unique_ptr<UIScreen> m_pendingScreen;
+        bool m_isRenderingUI{false};
 
         SDL_Window* m_window{nullptr};
         SDL_GLContext gl_context{nullptr};
@@ -79,7 +81,12 @@ namespace ImChat {
 
     template<typename TUIScreen, typename... Args>
     void Window::AddUIContent(Args&&... args) {
-        m_rootScreen = std::make_unique<TUIScreen>(shared_from_this(), std::forward<Args>(args)...);
+        auto nextScreen = std::make_unique<TUIScreen>(shared_from_this(), std::forward<Args>(args)...);
+        if (m_isRenderingUI) {
+            m_pendingScreen = std::move(nextScreen);
+            return;
+        }
+        m_rootScreen = std::move(nextScreen);
     }
 
 }

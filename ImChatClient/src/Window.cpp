@@ -67,7 +67,7 @@ ImChat::Window::Window(const std::string& Name,float w, float h):
     //io.BackendFlags|=ImGuiBackendFlags_RendererHasViewports;
 
    // io.ConfigFlags|= ImGuiConfigFlags_ViewportsEnable;
-    io.ConfigFlags|= ImGuiConfigFlags_DockingEnable;
+    //io.ConfigFlags|= ImGuiConfigFlags_DockingEnable;
 
     ImGui::StyleColorsDark();
     ImGui_ImplSDL3_InitForOpenGL(m_window, gl_context);
@@ -94,8 +94,16 @@ void ImChat::Window::BeginFrame(){
 }
 
 void ImChat::Window::RenderUIContent() {
+
+    //switch screen safely, avoids SIGTRAP
+    m_isRenderingUI = true;
     if (m_rootScreen) {
         m_rootScreen->Render();
+    }
+    m_isRenderingUI = false;
+
+    if (m_pendingScreen) {
+        m_rootScreen = std::move(m_pendingScreen);
     }
 }
 

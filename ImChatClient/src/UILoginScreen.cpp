@@ -43,20 +43,16 @@ namespace ImChat {
 
         //todo:logo
         //ImGui::Image(ImTextureRef(),ImVec2(100,100));
-        m_username.resize(32);
-
         ImGui::Text("Email");
         ImGui::PushID("LoginInputID");
-        ImGui::InputTextWithHint("", "Email", m_username.data(), m_username.capacity(), ImGuiInputTextFlags_None);
+        ImGui::InputTextWithHint("", "Email", &m_username, ImGuiInputTextFlags_None);
         ImGui::PopID();
 
         ImGui::Dummy(ImVec2(50,0));
 
-        m_password.resize(32);
-
         ImGui::Text("Password");
         ImGui::PushID("PasswordInputID");
-        ImGui::InputTextWithHint("", "Password", m_password.data(), m_password.capacity(), ImGuiInputTextFlags_Password,nullptr,&m_password);
+        ImGui::InputTextWithHint("", "Password", &m_password, ImGuiInputTextFlags_Password);
         ImGui::PopID();
 
         ImGui::Dummy(ImVec2(0, 20));

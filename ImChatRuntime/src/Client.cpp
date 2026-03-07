@@ -7,6 +7,15 @@
 #include "SFML/Network/IpAddress.hpp"
 #include "SFML/Network/Packet.hpp"
 
+namespace {
+    std::string TrimAtFirstNull(const std::string& value) {
+        const auto nullPos = value.find('\0');
+        if (nullPos == std::string::npos) {
+            return value;
+        }
+        return value.substr(0, nullPos);
+    }
+}
 
 ImChat::Client::Client() {
 
@@ -31,9 +40,10 @@ bool ImChat::Client::Login(const std::string& username, const std::string& passw
 
     // Send username
     sf::Packet packet;
-    packet << username;
+    const std::string cleanUsername = TrimAtFirstNull(username);
+    packet << cleanUsername;
 
-    ImChatLog::warn("Logging in server with username {} and password {} \n", username,password);
+    ImChatLog::warn("Logging in server with username {} and password {} \n", cleanUsername,password);
 
     if (m_socket.send(packet) != sf::Socket::Status::Done) {
          ImChatLog::error("Failed to send username");

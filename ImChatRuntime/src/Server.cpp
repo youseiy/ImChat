@@ -13,6 +13,15 @@
 #include "SFML/Network/TcpListener.hpp"
 
 #if !IMCHAT_SERVER
+namespace {
+    std::string TrimAtFirstNull(const std::string& value) {
+        const auto nullPos = value.find('\0');
+        if (nullPos == std::string::npos) {
+            return value;
+        }
+        return value.substr(0, nullPos);
+    }
+}
 
 namespace ImChat {
     Server::Server() {
@@ -47,50 +56,66 @@ namespace ImChat {
         std::shared_ptr<sf::TcpSocket > IncomingSocket{std::make_shared<sf::TcpSocket>()};
 
         sf::Socket::Status status=listener.accept(*IncomingSocket);
+        if (status != sf::Socket::Status::Done) {
+            return;
+        }
 
         // Receive an initial packet from the client
         sf::Packet packet;
         std::string msg;
         if (IncomingSocket->receive(packet) == sf::Socket::Status::Done) {
             packet >>msg;
+            msg = TrimAtFirstNull(msg);
+        } else {
+            ImChatLog::warn("Client connected but did not send username packet");
+            return;
 
         }
 
         ImChatLog::info(" {} has connected to Server",msg);
 
-        sf::Packet outpacket;
-
-        //outpacket<<"Connected to server. ";
-
-
         m_selector.add(*IncomingSocket);
+        ClientSockets.emplace_back(IncomingSocket);
 
-       UserPtr newUser{UserManager::Get()->createUserFromConnection(IncomingSocket,msg)};
+        // Send all currently connected users to the new client (before adding it).
+        JsonSerializer currentUsersSerializer;
+        currentUsersSerializer.write(
+            "type",
+            std::string(MessageHelpers::MessageTypeToString(ImChat::MessageType::USER_UPDATE))
+        );
+        UserManager::Get()->serialize(currentUsersSerializer);
 
-        /*
-         * 1. Receive new client and create connection
-         * 2. Update all clients about this new client
-         * 3. Update new Client with all connected clients
-         *
-         */
+        const std::string currentUsersRaw{currentUsersSerializer.str()};
+        ServerMessenger::sendData(IncomingSocket, currentUsersRaw);
+        ImChatLog::info(
+            "Sent connected users snapshot to {}:\n{}",
+            msg,
+            currentUsersSerializer.prettyStr(2)
+        );
 
-        JsonSerializer JsonS;
+        // Add the new user and notify everyone else about this single user.
+        UserPtr newUser{UserManager::Get()->createUserFromConnection(IncomingSocket, msg)};
+        JsonSerializer newUserSerializer;
 
-        NetworkMessage clientMsg;
+        newUserSerializer.writeArrayValue(
+            "connected_users",
+            JsonField{"username", newUser->GetUserNameStr()}
+        );
 
+        newUserSerializer.write(
+            "type",
+            std::string(MessageHelpers::MessageTypeToString(ImChat::MessageType::USER_LOGGED_IN))
+        );
 
-        UserManager::Get()->serialize(JsonS);
+        const std::string newUserRaw{newUserSerializer.str()};
 
-        clientMsg.type=MessageHelpers::MessageTypeToString(ImChat::MessageType::USER_LOGGED_IN);
-
-        clientMsg.serialize(JsonS);
-
-        UserManager::Get()->ForEachUser([JsonS](UserPtr& user) {
-
-            std::string raw{JsonS.str()};
-
-            ServerMessenger::sendData(user->GetConnection().socket,raw);
+        UserManager::Get()->ForEachUser([&newUser, &newUserRaw](UserPtr& user) {
+            if (user == newUser) {
+                return;
+            }
+            ServerMessenger::sendData(user->GetConnection().socket, newUserRaw);
         });
+        ImChatLog::info("Broadcasted new connected user:\n{}", newUserSerializer.prettyStr(2));
 
     }
 

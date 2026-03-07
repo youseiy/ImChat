@@ -35,6 +35,10 @@ namespace  ImChat {
             return j.dump();
         }
 
+        std::string prettyStr(int indent = 2) const {
+            return j.dump(indent);
+        }
+
     };
 
 }

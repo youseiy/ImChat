@@ -5,19 +5,18 @@
 
 
 struct ConnectedUsers {
+    std::shared_ptr<ImChat::User> add(const std::shared_ptr<ImChat::User> &NewUser);
 
-    std::shared_ptr<ImChat::User> add(const std::shared_ptr<ImChat::User>& NewUser);
 
-
-    void serialize(ISerializer& s) const {
-
-        for (const std::shared_ptr<ImChat::User>& user : m_connectedUsers) {
-
+    void serialize(ISerializer &s) const {
+        for (const std::shared_ptr<ImChat::User> &user: m_connectedUsers) {
             std::string username = user->GetUserNameStr();
 
             s.writeArrayValue("connected_users",
-                JsonField{"username",
-                    username});
+                              JsonField{
+                                  "username",
+                                  username
+                              });
         };
     };
 
